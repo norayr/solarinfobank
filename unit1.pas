@@ -98,6 +98,9 @@ begin
   Form1.Chart1.AddSeries(MySeries);
   Form1.Chart1.Extent.UseYMin := true; // for zero
   Form1.Chart1.Extent.YMin := 0;
+
+  Form1.Chart1.Margins.Top := 23;
+
   Form1.Chart1.Margins.Left := 0;
   Form1.Chart1.Margins.Bottom := 0;
 

@@ -62,7 +62,7 @@ var
 begin
 
   Location := 'http://solarinfobank.com';
-  loginContent := 'localZone=&username=USERNAME%40FREENET.AM&password=PASSWORD&autologin=true&autologin=false';
+  loginContent := 'localZone=&username=YOURUSERNAME%40FREENET.AM&password=PASSWORD&autologin=true&autologin=false';
 
   fStatusText := 'TMyThread Starting...';
   Synchronize(@Showstatus);

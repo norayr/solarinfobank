@@ -1,10 +1,10 @@
 object Form1: TForm1
   Left = 676
-  Height = 658
+  Height = 598
   Top = 182
   Width = 728
   Caption = 'Form1'
-  ClientHeight = 658
+  ClientHeight = 598
   ClientWidth = 728
   OnClose = FormClose
   OnCreate = FormCreate
@@ -22,7 +22,7 @@ object Form1: TForm1
   object StatusBar1: TStatusBar
     Left = 0
     Height = 22
-    Top = 636
+    Top = 576
     Width = 728
     Panels = <>
   end
