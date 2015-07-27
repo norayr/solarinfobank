@@ -66,6 +66,8 @@ implementation
 {$R *.lfm}
    var inProcess : boolean;
     { TForm1 }
+       MySeries, MySeries2: TAreaSeries;
+       MyScaleXMarks, MyScaleXMarks2: TDateTimeIntervalChartSource;
 
     procedure TForm1.Button1Click(Sender: TObject);
 
@@ -85,56 +87,11 @@ implementation
 
 procedure TForm1.drawChart;
 var
-  MySeries, MySeries2: TAreaSeries;
-  MyScaleXMarks, MyScaleXMarks2: TDateTimeIntervalChartSource;
-
   i : integer;
   data, datam : extractor.chartdata;
 
   //moment : double;
 begin
-  MyScaleXMarks:=TDateTimeIntervalChartSource.Create(Self);
-  MyScaleXMarks2:=TDateTimeIntervalChartSource.Create(Self);
-  //MyScaleXMarks.Params.Count:=5;
-  //MyScaleXMarks.Params.Options:=[aipUseCount,aipUseNiceSteps];
-  //MyScaleXMarks.Steps:=[dtsHour,dtsMinute,dtsSecond,dtsMillisecond];
-  MyScaleXMarks.Steps:=[{dtsDay,} dtsHour];
-  MyScaleXMarks2.Steps:=[dtsDay];
-   //MyScaleXMarks.Params
-  MyScaleXMarks.DateTimeFormat:='hh';
-  MyScaleXMarks2.DateTimeFormat:='dd';
-   // MyScaleXMarks.DateTimeFormat:='dd/hh';
-  //Form1.Chart1.BottomAxis.Marks.Format:='%2:h';
-
-  MySeries:=TAreaSeries.Create (Form1.Chart1);
-  //MySeries.AreaBrush.Color:= clBlue;
-  MySeries.AreaContourPen.Color:= clRed;
-  MySeries.SeriesColor:=clYellow;
-  MySeries.AreaLinesPen.Style:= TFPPenStyle.psClear;
-
-  MySeries2:=TAreaSeries.Create (Form1.Chart1);
-  //MySeries.AreaBrush.Color:= clBlue;
-  MySeries2.AreaContourPen.Color:= clRed;
-  MySeries2.SeriesColor:=clYellow;
-  MySeries2.AreaLinesPen.Style:= TFPPenStyle.psClear;
-
-  Form1.Chart1.BottomAxis.Marks.Source:=MyScaleXMarks;
-  Form1.Chart1.BottomAxis.Marks.Style:=TSeriesMarksStyle.smsLabel;
-  Form1.Chart1.AddSeries(MySeries);
-  Form1.Chart1.Extent.UseYMin := true; // for zero
-  Form1.Chart1.Extent.YMin := 0;
-  Form1.Chart1.Margins.Top := 23;
-  Form1.Chart1.Margins.Left := 0;
-  Form1.Chart1.Margins.Bottom := 0;
-
-  Form1.Chart2.BottomAxis.Marks.Source:=MyScaleXMarks2;
-  Form1.Chart2.BottomAxis.Marks.Style:=TSeriesMarksStyle.smsLabel;
-  Form1.Chart2.AddSeries(MySeries2);
-  Form1.Chart2.Extent.UseYMin := true; // for zero
-  Form1.Chart2.Extent.YMin := 0;
-  Form1.Chart2.Margins.Top := 23;
-  Form1.Chart2.Margins.Left := 0;
-  Form1.Chart2.Margins.Bottom := 0;
 
 //  extractor.ExtractCSVData(worker.outcsvfile, data);
     inProcess := true;
@@ -146,7 +103,7 @@ begin
    // MySeries.AddXY(i/(3600*24),5*sin(i/100));
 
      //MySeries.AddXY(StrToDateTime(dd + ' ' + hh + ':' + mm),StrToFloat(kw));
-       MySeries.AddXY(data[i].date, data[i].kw);
+     MySeries.AddXY(data[i].date, data[i].kw);
         // moment := now;
         // MySeries.AddXY(moment, data[i].kw);
 
@@ -221,7 +178,6 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-
 begin
   inherited;
 
@@ -231,20 +187,65 @@ begin
   CurrentPower.Picture.LoadFromFile('images/gauge.png');
   CO2Reduction.Picture.LoadFromFile('images/co2.png');
 
-   Form1.Chart1.BackColor:= clWhite;
-   Form1.Chart2.BackColor:= clWhite;
-//   Form1.Chart1.Color:=;
+
+    MyScaleXMarks:=TDateTimeIntervalChartSource.Create(Self);
+  MyScaleXMarks2:=TDateTimeIntervalChartSource.Create(Self);
+  //MyScaleXMarks.Params.Count:=5;
+  //MyScaleXMarks.Params.Options:=[aipUseCount,aipUseNiceSteps];
+  //MyScaleXMarks.Steps:=[dtsHour,dtsMinute,dtsSecond,dtsMillisecond];
+  MyScaleXMarks.Steps:=[{dtsDay,} dtsHour];
+  MyScaleXMarks2.Steps:=[dtsDay];
+   //MyScaleXMarks.Params
+  MyScaleXMarks.DateTimeFormat:='hh';
+  MyScaleXMarks2.DateTimeFormat:='dd';
+   // MyScaleXMarks.DateTimeFormat:='dd/hh';
+  //Form1.Chart1.BottomAxis.Marks.Format:='%2:h';
+
+  MySeries:=TAreaSeries.Create (Form1.Chart1);
+  //MySeries.AreaBrush.Color:= clBlue;
+  MySeries.AreaContourPen.Color:= clRed;
+  MySeries.SeriesColor:=clYellow;
+  MySeries.AreaLinesPen.Style:= TFPPenStyle.psClear;
+
+  MySeries2:=TAreaSeries.Create (Form1.Chart1);
+  //MySeries.AreaBrush.Color:= clBlue;
+  MySeries2.AreaContourPen.Color:= clRed;
+  MySeries2.SeriesColor:=clYellow;
+  MySeries2.AreaLinesPen.Style:= TFPPenStyle.psClear;
+
+  Form1.Chart1.BottomAxis.Marks.Source:=MyScaleXMarks;
+  Form1.Chart1.BottomAxis.Marks.Style:=TSeriesMarksStyle.smsLabel;
+  Form1.Chart1.AddSeries(MySeries);
+  Form1.Chart1.Extent.UseYMin := true; // for zero
+  Form1.Chart1.Extent.YMin := 0;
+  Form1.Chart1.Margins.Top := 23;
+  Form1.Chart1.Margins.Left := 0;
+  Form1.Chart1.Margins.Bottom := 0;
+
+  Form1.Chart2.BottomAxis.Marks.Source:=MyScaleXMarks2;
+  Form1.Chart2.BottomAxis.Marks.Style:=TSeriesMarksStyle.smsLabel;
+  Form1.Chart2.AddSeries(MySeries2);
+  Form1.Chart2.Extent.UseYMin := true; // for zero
+  Form1.Chart2.Extent.YMin := 0;
+  Form1.Chart2.Margins.Top := 23;
+  Form1.Chart2.Margins.Left := 0;
+  Form1.Chart2.Margins.Bottom := 0;
+
+  Form1.Chart1.BackColor:= clWhite;
+  Form1.Chart2.BackColor:= clWhite;
+
+  Chart2.Left:= Chart1.Left;
+  Chart2.Top:= Chart1.Top;
+  Chart2.Width:= Chart1.Width;
+  Chart2.Height:= Chart1.Height;
+  Chart2.Visible:= false;
+  Chart1.BringToFront;
+
 
   StatusBar1.SimpleText:= strconstants.statusBegin;
 
     Button1.Visible:= false; //following is moved from click code
 
-    Chart2.Left:= Chart1.Left;
-    Chart2.Top:= Chart1.Top;
-    Chart2.Width:= Chart1.Width;
-    Chart2.Height:= Chart1.Height;
-    Chart2.Visible:= false;
-    Chart1.BringToFront;
 
     startEvent:= TEvent.Create(nil, false, false, 'startEvent');
     stopEvent:= TEvent.Create(nil, false, false, 'stopEvent');
