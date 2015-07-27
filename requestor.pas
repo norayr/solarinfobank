@@ -19,8 +19,48 @@ procedure DoMoved;
 procedure SendRequest(ALocation: String);
 procedure SendPostRequest(ALocation, postData: String);
 procedure SendLoginPassword(ALocation, loginContent: String);
+function HTTPEncode(const AStr: String): String;
 
 implementation
+
+function HTTPEncode(const AStr: String): String;
+const
+  HTTPAllowed = ['A'..'Z','a'..'z',
+                 '*','@','.','_','-',
+                 '0'..'9',
+                 '$','!','''','(',')'];
+
+var
+  SS, S, R: PChar;
+  H: String[2];
+  L: Integer;
+begin
+  L:= Length(AStr);
+  SetLength(Result, L*3); // Worst case scenario
+  if (L = 0) then
+    exit;
+  R:= PChar(Result);
+  S:= PChar(AStr);
+  SS:= S; // Avoid #0 limit !!
+  while ((S - SS) < L) do
+  begin
+    if S^ in HTTPAllowed then
+      R^:=S^
+    else if (S^=' ') then
+      R^:='+'
+    else begin
+      R^:= '%';
+      H:= HexStr(Ord(S^), 2);
+      Inc(R);
+      R^:= H[1];
+      Inc(R);
+      R^:= H[2];
+    end;
+    Inc(R);
+    Inc(S);
+  end;
+  SetLength(Result, R - PChar(Result));
+end;
 
 procedure SendLoginPassword(ALocation, loginContent: String);
 var

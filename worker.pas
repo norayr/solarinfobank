@@ -7,32 +7,25 @@ interface
 uses
   Classes, SysUtils, extractor;
 
-const statusDataReady = 'data is ready';
-      statusBegin = 'application initialized';
-      outfile = '/tmp/solarinfo.txt';
-      //not necessary anymore
-      //outcsvfile = '/tmp/solarinfo.csv';
-      outjsonfile = '/tmp/solarinfo.json';
 type
-TShowStatusEvent = procedure(Status: String) of Object;
+
 
 TMyThread = class(TThread)
     private
-      FOnShowStatus: TShowStatusEvent;
-      procedure ShowStatus;
+       fStatusText : string;
+       procedure ShowStatus;
     protected
       procedure Execute; override;
     public
-      fStatusText : string;
       Constructor Create(CreateSuspended : boolean);
-      property OnShowStatus: TShowStatusEvent read FOnShowStatus write FOnShowStatus;
+
       property Terminated;
     end;
 
 var
     sd: extractor.SolarData;
 implementation
-uses dateutils, strutils, requestor;
+uses Unit1, strconstants, syncobjs, dateutils, strutils, requestor;
 
 constructor TMyThread.Create(CreateSuspended : boolean);
 begin
@@ -43,29 +36,38 @@ end;
 procedure TMyThread.ShowStatus;
 // this method is executed by the mainthread and can therefore access all GUI elements.
 begin
-  if Assigned(FOnShowStatus) then
-    begin
-      FOnShowStatus(fStatusText);
-    end;
-
+  Form1.StatusBar1.SimpleText:= fStatusText;
+  if fStatusText = strconstants.statusDataReady then
+   begin
+      Form1.updateData;
+      Form1.Timer1.Enabled:= true;
+   end
+  else
+   begin
+    Form1.Timer1.Enabled:= false;
+   end;
 end;
+
 
 
 procedure TMyThread.Execute;
 var
   newStatus : string;
   Location, loginContent, plant: string;
-  s0, s1 : boolean;
+  s0, s1, s2 : boolean;
   tm: TDateTime;
   dlm : set of char;
   str, day, tday, month, tmonth, year, tyear: string;
 begin
 
   Location := 'http://solarinfobank.com';
-  loginContent := 'localZone=&username=YOURUSERNAME%40FREENET.AM&password=PASSWORD&autologin=true&autologin=false';
+
+  Form1.startEvent.WaitFor(syncobjs.infinite);
 
   fStatusText := 'TMyThread Starting...';
-  Synchronize(@Showstatus);
+  Synchronize(@ShowStatus);
+
+  loginContent := 'localZone=&username=' + requestor.HTTPEncode(strconstants.username) +  '&password=' + requestor.HTTPEncode(strconstants.password) + '&autologin=true&autologin=false';
 
   while (not Terminated) {and ([any condition required])} do
     begin
@@ -76,7 +78,7 @@ begin
           repeat
            requestor.Init;
            fStatusText:='connecting...';
-           Synchronize(@Showstatus);
+           if not Terminated then Synchronize(@ShowStatus);
            //requestor.Work('http://solarinfobank.com', outfile);
 
 
@@ -87,7 +89,7 @@ begin
             Location:= 'http://solarinfobank.com/home/index';
 
             fStatusText:='logging in...';
-            Synchronize(@Showstatus);
+            if not Terminated then  Synchronize(@ShowStatus);
 
             //repeat
             requestor.SendLoginPassword(Location, loginContent);
@@ -95,7 +97,7 @@ begin
             while (HTTP.ResultCode = 301) or (HTTP.ResultCode = 302) do
             begin
                fStatusText:='processing redirect...';
-               Synchronize(@Showstatus);
+                          if not Terminated then  Synchronize(@ShowStatus);
                DoMoved;
             end;
             //until HTTP.ResultCode < 303;;
@@ -104,7 +106,7 @@ begin
             Location := 'http://solarinfobank.com/plant/includeoverview/3096';
 
             fStatusText:='getting farm info...';
-            Synchronize(@Showstatus);
+                       if not Terminated then Synchronize(@ShowStatus);
 
             s0 := false;
             requestor.SendRequest(Location);
@@ -120,7 +122,7 @@ begin
               begin
                  fStatusText:='failed to receive data';
               end;
-              Synchronize(@Showstatus);
+                         if not Terminated then Synchronize(@ShowStatus);
             //SendPostRequest('http://solarinfobank.com/DataExport/ExportChart', 'filename=20150722AGBU-Yerevan&type=text%2Fcsv&width=800&svg=&serieNo=23035042155');
 
             plant := 'pid=3096&startYYYYMMDDHH=2015072400&endYYYYMMDDHH=2015072523&chartType=area&intervalMins=5';
@@ -150,27 +152,60 @@ begin
 
             if s1 then
               begin
-              fStatusText := 'chart data downloaded'
+              fStatusText := 'chart data downloaded, getting monthly chart data'
               end
              else
              begin
                fStatusText := 'failed to download chart data';
              end;
-            Synchronize(@Showstatus);
+                      if not Terminated then Synchronize(@ShowStatus);
 
 
+            //plant := 'id=3096&startYYYYMMDD=20150701&endYYYYMMDD=20150731&chartType=column';
+
+
+            //plant := 'id=3096&startYYYYMMDD=20' + tyear + tmonth + '01&endYYYYMMDD=20' + tyear + tmonth + inttostr(daysinmonth(now)) + '&chartType=column';
+            //plant := 'pid=3096&startYYYYMMDDHH=2015070100&endYYYYMMDDHH=2015072531&chartType=area&intervalMins=60';
+            plant := 'pid=3096&startYYYYMMDDHH=20' + year + month + '0100&endYYYYMMDDHH=20' + tyear + tmonth + inttostr(daysinmonth(now)) + '23&chartType=area&intervalMins=60';
+
+            s2 := false;
+            requestor.SendPostRequest('http://solarinfobank.com/plantchart/PlantDayChart', plant);
+            s2 := requestor.HTTP.ResultCode = 200;
+
+            if s2 then
+              begin
+              fStatusText := 'monthly chart data downloaded'
+              end
+             else
+             begin
+                fStatusText := 'failed to download monthly chart data';
+             end;
+
+                         if not Terminated then  Synchronize(@ShowStatus);
+
+
+
+
+            requestor.HTTP.Document.SaveToFile(outmjsonfile);
+                      //       sleep (1000); // 1 secs, to watch the status
             requestor.Uninit;
 
-          until s0 and s1;
+          until s0 and s1 and s2;
            extractor.ExtractData(outfile, sd);
            fStatusText := statusDataReady;
-           Synchronize(@ShowStatus);
+                      if not Terminated then Synchronize(@ShowStatus);
+
+
 
            //Sleep(60000); //1 minute in milliseconds
-           Sleep(1800000); {30 minutes}
+           //Sleep(1800000); {30 minutes}
+           //Sleep(30000)
+           Form1.startEvent.WaitFor(strconstants.waittime)
       //  finally
       //  LeaveCriticalSection(MyCriticalSection);
        end;
+
+    Form1.stopEvent.SetEvent;
       // end of the main thread work
       {if NewStatus <> fStatusText then
         begin
