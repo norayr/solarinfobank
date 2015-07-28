@@ -13,7 +13,6 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
-    Button1: TButton;
     Chart1: TChart;
     Chart2: TChart;
     CurrentPower: TImage;
@@ -251,8 +250,6 @@ begin
 
 
   StatusBar1.SimpleText:= strconstants.statusBegin;
-
-    Button1.Visible:= false; //following is moved from click code
 
 
     waitEvent:= TEvent.Create(nil, false, false, 'startEvent');
