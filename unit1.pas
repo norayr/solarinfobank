@@ -39,6 +39,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure drawChart;
+    procedure FormShow(Sender: TObject);
     procedure updateData;
     procedure Timer1Timer(Sender: TObject);
 
@@ -51,7 +52,7 @@ type
   public
     { public declarations }
         MyThread: worker.TMyThread;
-        startEvent, stopEvent: TEvent;
+        waitEvent: TEvent;
 
 
   end;
@@ -118,6 +119,11 @@ begin
   setlength(datam, 0);
 end;
 
+procedure TForm1.FormShow(Sender: TObject);
+begin
+  MyThread.Resume;
+end;
+
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
   if (inProcess = false) and (StatusBar1.SimpleText = strconstants.statusDataReady) then
@@ -164,13 +170,15 @@ begin
         MyThread.Terminate;
 
 
-     startEvent.SetEvent;
+     waitEvent.SetEvent;
     { repeat
 
      until MyThread.Terminated;
      }
-    // repeat
-        r := stopEvent.WaitFor(infinite);
+
+     MyThread.WaitFor;
+     // repeat
+      //  r := stopEvent.WaitFor(infinite);
     // until r = TWaitResult.wrSignaled;
      //sleep(2000);
   //   end;
@@ -247,8 +255,7 @@ begin
     Button1.Visible:= false; //following is moved from click code
 
 
-    startEvent:= TEvent.Create(nil, false, false, 'startEvent');
-    stopEvent:= TEvent.Create(nil, false, false, 'stopEvent');
+    waitEvent:= TEvent.Create(nil, false, false, 'startEvent');
 
      {    if (StatusBar1.SimpleText = worker.statusDataReady) or
               (StatusBar1.SimpleText = worker.statusBegin) then
@@ -258,9 +265,7 @@ begin
              MyThread.Resume;
           end;
       }
-      MyThread := worker.TMyThread.Create(false);
-
-      startEvent.SetEvent; //run thread
+      MyThread := worker.TMyThread.Create(true);
 
          Timer1.Interval := 10000;
          Timer1.Enabled:= false;
@@ -271,8 +276,7 @@ procedure TForm1.FormDestroy(Sender: TObject);
 begin
   //MyThread.Terminate;
   //DeleteCriticalSection(MyCriticalSection);
-  startEvent.Free;
-  stopEvent.Free;
+  waitEvent.Free;
   inherited;
 
 end;

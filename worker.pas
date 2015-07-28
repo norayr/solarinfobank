@@ -62,8 +62,6 @@ begin
 
   Location := 'http://solarinfobank.com';
 
-  Form1.startEvent.WaitFor(syncobjs.infinite);
-
   fStatusText := 'TMyThread Starting...';
   Synchronize(@ShowStatus);
 
@@ -200,12 +198,11 @@ begin
            //Sleep(60000); //1 minute in milliseconds
            //Sleep(1800000); {30 minutes}
            //Sleep(30000)
-           Form1.startEvent.WaitFor(strconstants.waittime)
+           Form1.waitEvent.WaitFor(strconstants.waittime)
       //  finally
       //  LeaveCriticalSection(MyCriticalSection);
        end;
 
-    Form1.stopEvent.SetEvent;
       // end of the main thread work
       {if NewStatus <> fStatusText then
         begin
