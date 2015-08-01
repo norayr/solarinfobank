@@ -14,8 +14,9 @@ const statusDataReady = 'data is ready';
       outjsonfile = '/tmp/solarinfo.json';
       outmjsonfile = '/tmp/solarinfom.json';
 
-      username = 'username@freenet.am';
-      password = 'password';
+      username = 'artin_74@yahoo.com';
+      password = 'agbusolart';
+      farm = '3096'   ;
       waittime = 1800000; // 30 minutes in milliseconds
 
 implementation

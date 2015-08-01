@@ -73,35 +73,39 @@ begin
       //here goes the code of the main thread loop
       //EnterCriticalSection(MyCriticalSection);
      // try
-          repeat
-           requestor.Init;
-           fStatusText:='connecting...';
-           if not Terminated then Synchronize(@ShowStatus);
-           //requestor.Work('http://solarinfobank.com', outfile);
+     repeat
+        requestor.Init;
 
 
-           requestor.SendRequest(Location);
+          fStatusText:='connecting...';
+          if not Terminated then Synchronize(@ShowStatus);
+          //requestor.Work('http://solarinfobank.com', outfile);
 
 
-            WriteLn('Sending Login and Password...');
-            Location:= 'http://solarinfobank.com/home/index';
+          requestor.SendRequest(Location);
 
-            fStatusText:='logging in...';
-            if not Terminated then  Synchronize(@ShowStatus);
 
-            //repeat
-            requestor.SendLoginPassword(Location, loginContent);
+           WriteLn('Sending Login and Password...');
+           Location:= 'http://solarinfobank.com/home/index';
 
-            while (HTTP.ResultCode = 301) or (HTTP.ResultCode = 302) do
-            begin
-               fStatusText:='processing redirect...';
-                          if not Terminated then  Synchronize(@ShowStatus);
-               DoMoved;
-            end;
-            //until HTTP.ResultCode < 303;;
+           fStatusText:='logging in...';
+           if not Terminated then  Synchronize(@ShowStatus);
+
+
+           requestor.SendLoginPassword(Location, loginContent);
+
+           while (HTTP.ResultCode = 301) or (HTTP.ResultCode = 302) do
+           begin
+             fStatusText:='processing redirect...';
+             if not Terminated then  Synchronize(@ShowStatus);
+             DoMoved;
+           end;
+
+
+           //until HTTP.ResultCode < 303;
 
             WriteLn('getting farm info...');
-            Location := 'http://solarinfobank.com/plant/includeoverview/3096';
+            Location := 'http://solarinfobank.com/plant/includeoverview/' + strconstants.farm;
 
             fStatusText:='getting farm info...';
                        if not Terminated then Synchronize(@ShowStatus);
@@ -123,7 +127,7 @@ begin
                          if not Terminated then Synchronize(@ShowStatus);
             //SendPostRequest('http://solarinfobank.com/DataExport/ExportChart', 'filename=20150722AGBU-Yerevan&type=text%2Fcsv&width=800&svg=&serieNo=23035042155');
 
-            plant := 'pid=3096&startYYYYMMDDHH=2015072400&endYYYYMMDDHH=2015072523&chartType=area&intervalMins=5';
+            plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=2015072400&endYYYYMMDDHH=2015072523&chartType=area&intervalMins=5';
 
             tm := Yesterday;
             str := DateTimeToStr(tm);
@@ -141,7 +145,8 @@ begin
             if length(tday) < 2 then begin tday := '0' + tday end;
             if length(tmonth) < 2 then begin tmonth := '0' + tmonth end;
 
-            plant := 'pid=3096&startYYYYMMDDHH=20' + year + month + day + '00&endYYYYMMDDHH=20' + tyear + tmonth + tday + '23&chartType=area&intervalMins=5';
+            plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=20' + year + month + day + '00&endYYYYMMDDHH=20' + tyear + tmonth + tday + '23&chartType=area&intervalMins=5';
+
             s1 := false;
             requestor.SendPostRequest('http://solarinfobank.com/plantchart/PlantDayChart', plant);
             s1 := requestor.HTTP.ResultCode = 200;
@@ -164,7 +169,8 @@ begin
 
             //plant := 'id=3096&startYYYYMMDD=20' + tyear + tmonth + '01&endYYYYMMDD=20' + tyear + tmonth + inttostr(daysinmonth(now)) + '&chartType=column';
             //plant := 'pid=3096&startYYYYMMDDHH=2015070100&endYYYYMMDDHH=2015072531&chartType=area&intervalMins=60';
-            plant := 'pid=3096&startYYYYMMDDHH=20' + year + month + '0100&endYYYYMMDDHH=20' + tyear + tmonth + inttostr(daysinmonth(now)) + '23&chartType=area&intervalMins=60';
+            //their api can return only data for current month.
+            plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=20' + tyear + tmonth + '0100&endYYYYMMDDHH=20' + tyear + tmonth + inttostr(daysinmonth(now)) + '23&chartType=area&intervalMins=60';
 
             s2 := false;
             requestor.SendPostRequest('http://solarinfobank.com/plantchart/PlantDayChart', plant);

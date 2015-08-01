@@ -25,7 +25,7 @@ procedure ExtractCSVData(source: string; var data: chartdata);
 procedure ExtractJsonData(AFileName: string; var chd: chartdata);
 
 implementation
-uses Dialogs, strutils, fpjson, jsonparser;
+uses Dialogs, strutils, dateutils, fpjson, jsonparser;
 
 procedure ExtractData(source : String; var sd: SolarData);
 var
@@ -78,6 +78,10 @@ var
   str : string;
   dlm : set of char;
   hh,mm,dd: string;
+
+  tm : TDateTime;
+  dlm1 : set of char;
+  str1, str2, day, tday, month, tmonth, year, tyear: string;
 begin
 
   Stream := TFileStream.Create(AFileName, fmOpenRead);
@@ -92,6 +96,23 @@ begin
   k := J0.FindPath('categories').Count;
   setlength(chd, k+2);
 
+            tm := Yesterday;
+            str1 := DateTimeToStr(tm);
+            dlm1 := ['-', ' ', ':'];
+            day := strutils.ExtractWord(1, str1, dlm1);
+            month := strutils.ExtractWord(2, str1, dlm1);
+            year := strutils.ExtractWord(3, str1, dlm1);
+            if length(day) < 2 then begin day := '0' + day end;
+            if length(month) < 2 then begin month := '0' + month end;
+            tm := Now;
+            str1 := DateTimeToStr(tm);
+            tday := strutils.ExtractWord(1, str1, dlm1);
+            tmonth := strutils.ExtractWord(2, str1, dlm1);
+            tyear := strutils.ExtractWord(3, str1, dlm1);
+            if length(tday) < 2 then begin tday := '0' + tday end;
+            if length(tmonth) < 2 then begin tmonth := '0' + tmonth end;
+
+
   i := 0; j := 0;
   repeat
      str := J0.FindPath('categories').Items[i].AsString;
@@ -103,8 +124,15 @@ begin
 
      if dd <> '00' then
      begin
-
-        chd[j].date := StrToDateTime(dd + ' ' + hh + ':' + mm);
+        if dd = day then
+        begin
+          str2 :=  dd + '-' + month + '-20' + year + ' ' + hh + ':' + mm;
+        end
+        else
+        begin
+          str2 := dd + ' ' + hh + ':' + mm;
+        end;
+        chd[j].date := StrToDateTime(str2);
         if j3.Items[i].IsNull then
         begin
           //Memo1.Lines.Add('null');

@@ -152,7 +152,8 @@ end;
 procedure Init;
 begin
 HTTP:= THTTPSend.Create;
-HTTP.UserAgent:= 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:14.0) Gecko/20100101 Firefox/14.0.1';
+//HTTP.UserAgent:= 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:14.0) Gecko/20100101 Firefox/14.0.1';
+HTTP.UserAgent:= 'Mozilla/5.0 (X11; Linux x86_64; rv:39.0) Gecko/20100101 Firefox/39.0';
 Cookies:= TStringList.Create;
 
 end;
