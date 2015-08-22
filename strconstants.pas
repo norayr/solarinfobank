@@ -18,7 +18,6 @@ const statusDataReady = 'data is ready';
       password = 'password';
       farm = '3096'   ;
       waittime = 1800000; // 30 minutes in milliseconds
-
 implementation
 
 end.

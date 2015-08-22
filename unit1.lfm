@@ -1,11 +1,11 @@
 object Form1: TForm1
-  Left = 676
-  Height = 481
-  Top = 182
-  Width = 737
+  Left = 355
+  Height = 652
+  Top = 59
+  Width = 914
   Caption = 'Form1'
-  ClientHeight = 481
-  ClientWidth = 737
+  ClientHeight = 652
+  ClientWidth = 914
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -14,9 +14,9 @@ object Form1: TForm1
   LCLVersion = '1.2.6.0'
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 19
-    Top = 462
-    Width = 737
+    Height = 22
+    Top = 630
+    Width = 914
     Panels = <>
   end
   object TodayEnergy: TImage
@@ -104,10 +104,10 @@ object Form1: TForm1
     TabOrder = 8
   end
   object Chart1: TChart
-    Left = 20
-    Height = 208
-    Top = 168
-    Width = 618
+    Left = 24
+    Height = 280
+    Top = 232
+    Width = 868
     AxisList = <    
       item
         Minors = <>
@@ -129,10 +129,10 @@ object Form1: TForm1
     ParentColor = False
   end
   object Chart2: TChart
-    Left = 22
-    Height = 208
-    Top = 168
-    Width = 618
+    Left = 24
+    Height = 272
+    Top = 232
+    Width = 864
     AxisList = <    
       item
         Minors = <>
@@ -153,9 +153,33 @@ object Form1: TForm1
     )
     ParentColor = False
   end
+  object StaticText5: TStaticText
+    Left = 600
+    Height = 32
+    Top = 568
+    Width = 264
+    Caption = 'StaticText5'
+    TabOrder = 11
+  end
+  object StaticText6: TStaticText
+    Left = 32
+    Height = 32
+    Top = 184
+    Width = 120
+    Caption = 'StaticText6'
+    TabOrder = 12
+  end
+  object StaticText7: TStaticText
+    Left = 200
+    Height = 32
+    Top = 520
+    Width = 264
+    Caption = 'StaticText7'
+    TabOrder = 13
+  end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    left = 683
-    top = 206
+    left = 672
+    top = 160
   end
 end
