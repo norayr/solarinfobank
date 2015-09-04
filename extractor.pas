@@ -91,7 +91,7 @@ var
     J0 := Parser.Parse;
     Stream.Free;
     Parser.Free;
-
+  if J0 <> nil then begin
     J1 := J0.GetPath('series');
     J2 :=J1.Items[0];
     J3 := J2.GetPath('data');
@@ -158,7 +158,8 @@ var
        //if i > j then begin ShowMessage('i=' + IntToStr(i) + ' j=' + IntToStr(j) + ' dd=' + dd + 'hh=' + hh + ' mm=' + mm  ) end;
     until i = k;
     setlength(chd, j);
-   end;
+  end // if J0 <> nil
+  end;
 
 procedure ExtractCSVData(source: string; var data: chartdata);
 var
