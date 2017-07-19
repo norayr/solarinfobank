@@ -15,8 +15,12 @@ type
   TForm1 = class(TForm)
     Chart1: TChart;
     Chart2: TChart;
-    CurrentPower: TImage;
-    CO2Reduction: TImage;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
+    Image4: TImage;
+    Image5: TImage;
+    Image6: TImage;
     StaticText1: TStaticText;
     StaticText2: TStaticText;
     StaticText3: TStaticText;
@@ -29,8 +33,6 @@ type
     STTotalEnergy: TStaticText;
     STCurrentPower: TStaticText;
     Timer1: TTimer;
-    TotalEnergy: TImage;
-    TodayEnergy: TImage;
     StatusBar1: TStatusBar;
 
 
@@ -42,6 +44,8 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure drawChart;
     procedure FormShow(Sender: TObject);
+    //procedure Image1Click(Sender: TObject);
+    //procedure Label1Click(Sender: TObject);
     procedure updateData;
     procedure Timer1Timer(Sender: TObject);
 
@@ -55,7 +59,7 @@ type
     { public declarations }
         MyThread: worker.TMyThread;
         waitEvent: TEvent;
-
+        
 
   end;
 
@@ -70,7 +74,7 @@ implementation
    var inProcess : boolean;
     { TForm1 }
        MySeries{, MySeries2}: TAreaSeries;
-       MySeries2: TBarSeries;
+       MySeries2 : TBarSeries;
        MyScaleXMarks, MyScaleXMarks2: TDateTimeIntervalChartSource;
 
     procedure TForm1.Button1Click(Sender: TObject);
@@ -106,14 +110,14 @@ begin
     extractor.ExtractJsonData(outjsonfile, data, kwh) ;
     extractor.ExtractJsonData(outmjsonfile, datam, kwh) ;
 
-
     MySeries.Clear;
+
     for i := 0 to high(data) do
       begin
    // MySeries.AddXY(i/(3600*24),5*sin(i/100));
 
      //MySeries.AddXY(StrToDateTime(dd + ' ' + hh + ':' + mm),StrToFloat(kw));
-          MySeries.AddXY(data[i].date, data[i].kw);
+     MySeries.AddXY(data[i].date, data[i].kw);
         // moment := now;
         // MySeries.AddXY(moment, data[i].kw);
 
@@ -125,13 +129,13 @@ begin
       end;
       }
 
-     MySeries2.Clear;
+   MySeries2.Clear; 
 
-   for i := low(kwh) to high(kwh) do
-    begin
-      //MySeries2.AddArray(kwh);
-      MySeries2.AddXY(i, kwh[i]);
-    end;
+// for i := low(kwh) to high(kwh) do
+// begin
+      MySeries2.AddArray(kwh);
+//      MySeries2.AddXY(i, kwh[i]);
+// end;
        inProcess := false;
   setlength(data, 0);
   setlength(datam, 0);
@@ -142,8 +146,17 @@ begin
   MyThread.Resume;
 end;
 
+
 procedure TForm1.Timer1Timer(Sender: TObject);
+//var
+//   td: TDateTime;
+//   tdstr: String;
 begin
+
+//   td:= Now;
+//   tdstr := DateTimeToStr(td);
+//   Form1.StaticText5.Caption:='Today: ' + tdstr;
+
   if (inProcess = false) and (StatusBar1.SimpleText = strconstants.statusDataReady) then
    begin
       if Chart1.Visible then
@@ -270,12 +283,13 @@ begin
   inherited;
 
 
-  TodayEnergy.Picture.LoadFromFile('images/robotik.png');
-  TotalEnergy.Picture.LoadFromFile('images/robotik.png');
-  CurrentPower.Picture.LoadFromFile('images/gauge.png');
-  CO2Reduction.Picture.LoadFromFile('images/co2.png');
+  //TodayEnergy.Picture.LoadFromFile('images/robotik.png');
+  //TotalEnergy.Picture.LoadFromFile('images/robotik.png');
+  //CurrentPower.Picture.LoadFromFile('images/gauge.png');
+  //CO2Reduction.Picture.LoadFromFile('images/co2.png');
 
-  MyScaleXMarks:=TDateTimeIntervalChartSource.Create(Self);
+
+    MyScaleXMarks:=TDateTimeIntervalChartSource.Create(Self);
   MyScaleXMarks2:=TDateTimeIntervalChartSource.Create(Self);
   //MyScaleXMarks.Params.Count:=5;
   //MyScaleXMarks.Params.Options:=[aipUseCount,aipUseNiceSteps];
@@ -318,7 +332,7 @@ begin
   Form1.Chart2.AddSeries(MySeries2);
   Form1.Chart2.Extent.UseYMin := true; // for zero
   Form1.Chart2.Extent.YMin := 0;
-  Form1.Chart2.Extent.UseXMin := false; // for zero
+  Form1.Chart2.Extent.UseXMin := False; // for zero
   Form1.Chart2.Extent.XMin := 1;
 //  Form1.Chart2.Extent.Visible:=False;
   Form1.Chart2.Margins.Top := 23;
@@ -349,10 +363,6 @@ begin
   Form1.StaticText3.Caption:='Ընթացիկ Հզօրութիւն';
   Form1.StaticText4.Caption:='Ածխաթթւի Կրճատում';
 
-  Form1.StaticText5.Caption:='';
-  Form1.StaticText6.Caption:='';
-  Form1.StaticText7.Caption:='';
-
 
   StatusBar1.SimpleText:= strconstants.statusBegin;
 
@@ -369,7 +379,7 @@ begin
       }
       MyThread := worker.TMyThread.Create(true);
 
-         Timer1.Interval := 5000;
+         Timer1.Interval := 30000;
          Timer1.Enabled:= false;
          inProcess := true;
 end;
