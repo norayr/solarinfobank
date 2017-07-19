@@ -22,7 +22,6 @@ type SolarData = record
 
 procedure ExtractData(source : String; var sd: SolarData);
 procedure ExtractCSVData(source: string; var data: chartdata);
-//procedure ExtractJsonData(AFileName: string; var chd: chartdata);
 procedure ExtractJsonData(AFileName: string; var chd: chartdata; var kwh : array of real);
 
 implementation
@@ -84,13 +83,13 @@ var
   tm : TDateTime;
   dlm1 : set of char;
   str1, str2, day, tday, month, tmonth, year, tyear: string;
-  begin
+begin
 
-    Stream := TFileStream.Create(AFileName, fmOpenRead);
-    Parser := TJSONParser.Create(Stream);
-    J0 := Parser.Parse;
-    Stream.Free;
-    Parser.Free;
+  Stream := TFileStream.Create(AFileName, fmOpenRead);
+  Parser := TJSONParser.Create(Stream);
+  J0 := Parser.Parse;
+  Stream.Free;
+  Parser.Free;
   if J0 <> nil then begin
     J1 := J0.GetPath('series');
     J2 :=J1.Items[0];
@@ -98,21 +97,21 @@ var
     k := J0.FindPath('categories').Count;
     setlength(chd, k+2);
 
-              tm := Yesterday;
-              str1 := DateTimeToStr(tm);
-              dlm1 := ['-', ' ', ':'];
-              day := strutils.ExtractWord(1, str1, dlm1);
-              month := strutils.ExtractWord(2, str1, dlm1);
-              year := strutils.ExtractWord(3, str1, dlm1);
-              if length(day) < 2 then begin day := '0' + day end;
-              if length(month) < 2 then begin month := '0' + month end;
-              tm := Now;
-              str1 := DateTimeToStr(tm);
-              tday := strutils.ExtractWord(1, str1, dlm1);
-              tmonth := strutils.ExtractWord(2, str1, dlm1);
-              tyear := strutils.ExtractWord(3, str1, dlm1);
-              if length(tday) < 2 then begin tday := '0' + tday end;
-              if length(tmonth) < 2 then begin tmonth := '0' + tmonth end;
+            tm := Yesterday;
+            str1 := DateTimeToStr(tm);
+            dlm1 := ['-', ' ', ':'];
+            day := strutils.ExtractWord(1, str1, dlm1);
+            month := strutils.ExtractWord(2, str1, dlm1);
+            year := strutils.ExtractWord(3, str1, dlm1);
+            if length(day) < 2 then begin day := '0' + day end;
+            if length(month) < 2 then begin month := '0' + month end;
+            tm := Now;
+            str1 := DateTimeToStr(tm);
+            tday := strutils.ExtractWord(1, str1, dlm1);
+            tmonth := strutils.ExtractWord(2, str1, dlm1);
+            tyear := strutils.ExtractWord(3, str1, dlm1);
+            if length(tday) < 2 then begin tday := '0' + tday end;
+            if length(tmonth) < 2 then begin tmonth := '0' + tmonth end;
 
 
     for ki := low(kwh) to high(kwh) do
@@ -159,7 +158,7 @@ var
     until i = k;
     setlength(chd, j);
   end // if J0 <> nil
-  end;
+end;
 
 procedure ExtractCSVData(source: string; var data: chartdata);
 var

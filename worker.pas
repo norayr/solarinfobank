@@ -127,7 +127,7 @@ begin
                          if not Terminated then Synchronize(@ShowStatus);
             //SendPostRequest('http://www.solarinfobank.com/DataExport/ExportChart', 'filename=20150722AGBU-Yerevan&type=text%2Fcsv&width=800&svg=&serieNo=23035042155');
 
-            plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=2015072400&endYYYYMMDDHH=2015072523&chartType=area&intervalMins=5';
+            //plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=2015072400&endYYYYMMDDHH=2015072523&chartType=area&intervalMins=5';
 
             tm := Yesterday;
             str := DateTimeToStr(tm);
@@ -170,7 +170,7 @@ begin
             //plant := 'id=3096&startYYYYMMDD=20' + tyear + tmonth + '01&endYYYYMMDD=20' + tyear + tmonth + inttostr(daysinmonth(now)) + '&chartType=column';
             //plant := 'pid=3096&startYYYYMMDDHH=2015070100&endYYYYMMDDHH=2015072531&chartType=area&intervalMins=60';
             //their api can return only data for current month.
-            plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=20' + tyear + tmonth + '0100&endYYYYMMDDHH=20' + tyear + tmonth + inttostr(daysinmonth(now)) + '23&chartType=area&intervalMins=60';
+            plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=20' + tyear + tmonth + '0100&endYYYYMMDDHH=20' + tyear + tmonth + inttostr(daysinmonth(now)) + '23&chartType=area&intervalMins=5';
 
             s2 := false;
             requestor.SendPostRequest('http://www.solarinfobank.com/plantchart/PlantDayChart', plant);
