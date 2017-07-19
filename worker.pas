@@ -60,7 +60,7 @@ var
   str, day, tday, month, tmonth, year, tyear: string;
 begin
 
-  Location := 'http://solarinfobank.com';
+  Location := 'http://www.solarinfobank.com';
 
   fStatusText := 'TMyThread Starting...';
   Synchronize(@ShowStatus);
@@ -86,7 +86,7 @@ begin
 
 
            WriteLn('Sending Login and Password...');
-           Location:= 'http://solarinfobank.com/home/index';
+           Location:= 'http://www.solarinfobank.com/home/index';
 
            fStatusText:='logging in...';
            if not Terminated then  Synchronize(@ShowStatus);
@@ -105,7 +105,7 @@ begin
            //until HTTP.ResultCode < 303;
 
             WriteLn('getting farm info...');
-            Location := 'http://solarinfobank.com/plant/includeoverview/' + strconstants.farm;
+            Location := 'http://www.solarinfobank.com/plant/includeoverview/' + strconstants.farm;
 
             fStatusText:='getting farm info...';
                        if not Terminated then Synchronize(@ShowStatus);
@@ -125,7 +125,7 @@ begin
                  fStatusText:='failed to receive data';
               end;
                          if not Terminated then Synchronize(@ShowStatus);
-            //SendPostRequest('http://solarinfobank.com/DataExport/ExportChart', 'filename=20150722AGBU-Yerevan&type=text%2Fcsv&width=800&svg=&serieNo=23035042155');
+            //SendPostRequest('http://www.solarinfobank.com/DataExport/ExportChart', 'filename=20150722AGBU-Yerevan&type=text%2Fcsv&width=800&svg=&serieNo=23035042155');
 
             plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=2015072400&endYYYYMMDDHH=2015072523&chartType=area&intervalMins=5';
 
@@ -148,7 +148,7 @@ begin
             plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=20' + year + month + day + '00&endYYYYMMDDHH=20' + tyear + tmonth + tday + '23&chartType=area&intervalMins=5';
 
             s1 := false;
-            requestor.SendPostRequest('http://solarinfobank.com/plantchart/PlantDayChart', plant);
+            requestor.SendPostRequest('http://www.solarinfobank.com/plantchart/PlantDayChart', plant);
             s1 := requestor.HTTP.ResultCode = 200;
 
             requestor.HTTP.Document.SaveToFile(outjsonfile);
@@ -173,7 +173,7 @@ begin
             plant := 'pid=' + strconstants.farm + '&startYYYYMMDDHH=20' + tyear + tmonth + '0100&endYYYYMMDDHH=20' + tyear + tmonth + inttostr(daysinmonth(now)) + '23&chartType=area&intervalMins=60';
 
             s2 := false;
-            requestor.SendPostRequest('http://solarinfobank.com/plantchart/PlantDayChart', plant);
+            requestor.SendPostRequest('http://www.solarinfobank.com/plantchart/PlantDayChart', plant);
             s2 := requestor.HTTP.ResultCode = 200;
 
             if s2 then
